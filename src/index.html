@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming Website</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <div id="top-bar">
+            <h1>Video Streaming</h1>
+            <div id="imdb-search">
+                <input type="text" id="imdb-id-input" placeholder="Enter IMDb ID...">
+                <button id="imdb-search-button">Play</button>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div id="video-container">
+            <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </main>
+    <div id="loader" style="display: none;">Loading...</div>
+    <footer>
+        <p>&copy; 2023 Video Streaming Website</p>
+    </footer>
+    <script src="scripts/app.js"></script>
+    <script>
+        document.getElementById('imdb-search-button').addEventListener('click', () => {
+            const imdbId = document.getElementById('imdb-id-input').value.trim();
+            if (imdbId) {
+                const iframe = document.getElementById('video-player');
+                const loader = document.getElementById('loader');
+                loader.style.display = 'block';
+                console.log('Fetching video for IMDb ID:', imdbId);
+                iframe.src = `https://vidbinge.dev/embed/movie/${imdbId}`;
+                iframe.onload = () => {
+                    loader.style.display = 'none';
+                    console.log('Video loaded successfully.');
+                };
+                iframe.setAttribute('allowfullscreen', '');
+                iframe.setAttribute('scrolling', 'no');
+            } else {
+                console.log('No IMDb ID provided.');
+            }
+        });
+    </script>
+</body>
+</html>
