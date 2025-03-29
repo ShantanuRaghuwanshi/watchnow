@@ -9,32 +9,58 @@
 <body>
     <header>
         <div id="top-bar">
-            <h1>Video Streaming</h1>
-            <div id="imdb-search">
-                <input type="text" id="imdb-id-input" placeholder="Enter IMDb ID...">
-                <button id="imdb-search-button">Play</button>
+            <div id="logo-container">
+                <img src="assets/watchnow.jpeg" alt="WatchNow Logo" id="logo">
+                <h1>WatchNow</h1>
             </div>
         </div>
     </header>
+    <div id="search-section">
+        <div id="imdb-search">
+            <input type="text" id="imdb-id-input" placeholder="Enter IMDb ID...">
+            <button id="imdb-search-button">Play</button>
+        </div>
+        <div id="name-search">
+            <input type="text" id="movie-name-input" placeholder="Search by movie name...">
+            <button id="name-search-button">Search</button>
+            <div id="search-results" class="hidden"></div>
+        </div>
+    </div>
     <main>
         <div id="video-container">
             <iframe id="video-player" src="" frameborder="0" allowfullscreen></iframe>
         </div>
+        <section id="latest-movies">
+            <h2>Latest Movies</h2>
+            <ul id="latest-movies-list"></ul>
+        </section>
+        <section id="movie-metadata">
+            <h2>Movie Metadata</h2>
+            <div id="metadata-container"></div>
+        </section>
     </main>
-    <div id="loader" style="display: none;">Loading...</div>
+    <div id="loader" class="hidden">Loading...</div>
     <footer>
-        <p>&copy; 2023 Video Streaming Website</p>
+        <p>&copy; 2025 Personal Streaming Website</p>
     </footer>
     <script src="scripts/app.js"></script>
+    <script src="utils/metadata.js"></script>
     <script>
-        document.getElementById('imdb-search-button').addEventListener('click', () => {
+        document.getElementById('imdb-search-button').addEventListener('click', async () => {
             const imdbId = document.getElementById('imdb-id-input').value.trim();
             if (imdbId) {
+                try {
+                    const metadata = await getMovieMetadata(imdbId);
+                    const container = document.getElementById('metadata-container');
+                    container.innerHTML = `<pre>${JSON.stringify(metadata, null, 2)}</pre>`;
+                } catch (error) {
+                    console.error('Error fetching metadata:', error);
+                }
                 const iframe = document.getElementById('video-player');
                 const loader = document.getElementById('loader');
                 loader.style.display = 'block';
                 console.log('Fetching video for IMDb ID:', imdbId);
-                iframe.src = `https://vidbinge.dev/embed/movie/${imdbId}`;
+                iframe.src = `https://vidsrc.io/embed/movie/${imdbId}`;
                 iframe.onload = () => {
                     loader.style.display = 'none';
                     console.log('Video loaded successfully.');
@@ -45,6 +71,61 @@
                 console.log('No IMDb ID provided.');
             }
         });
+
+        document.getElementById('name-search-button').addEventListener('click', async () => {
+            const movieName = document.getElementById('movie-name-input').value.trim();
+            const resultsContainer = document.getElementById('search-results');
+            resultsContainer.innerHTML = ''; // Clear previous results
+            if (movieName) {
+                try {
+                    const results = await searchMovies(movieName);
+                    console.log('Search results:', results);
+                    if (results.length > 0) {
+                        results.forEach(movie => {
+                            const resultItem = document.createElement('div');
+                            resultItem.className = 'search-result-item';
+                            resultItem.textContent = movie.title || 'Unknown Title';
+                            resultItem.addEventListener('click', () => {
+                                alert(`Selected: ${movie.title}`);
+                                resultsContainer.classList.add('hidden');
+                            });
+                            resultsContainer.appendChild(resultItem);
+                        });
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<p>No results found.</p>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Error fetching search results:', error);
+                }
+            } else {
+                console.log('No movie name provided.');
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            const resultsContainer = document.getElementById('search-results');
+            if (!document.getElementById('name-search').contains(event.target)) {
+                resultsContainer.classList.add('hidden');
+            }
+        });
+
+        async function fetchLatestMovies() {
+            try {
+                const movies = await getLatestMovies();
+                const list = document.getElementById('latest-movies-list');
+                list.innerHTML = '';
+                movies.forEach(movie => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = movie.title || 'Unknown Title';
+                    list.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching latest movies:', error);
+            }
+        }
+        fetchLatestMovies();
     </script>
 </body>
 </html>

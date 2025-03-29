@@ -1,4 +1,4 @@
-import { getTopMovies, getLatestMovies, getLatestSeries, searchMovies } from '../utils/scraper.js';
+import { getTopMovies, getLatestMovies, getLatestSeries, searchMovies } from '../utils/metadata.js';
 
 const videoContainer = document.getElementById('video-container');
 const videoList = document.getElementById('video-list');
@@ -57,7 +57,7 @@ async function handleSearch() {
     console.log('Searching for movies with query:', query);
     const loader = document.getElementById('loader');
     loader.style.display = 'block';
-    const results = await searchMovies(query);
+    const results = await searchMovies(query);s
     loader.style.display = 'none';
     console.log('Search results:', results);
     const searchResultsList = document.getElementById('search-results');
@@ -83,6 +83,52 @@ window.addEventListener('DOMContentLoaded', () => {
     displayLatestMovies();
     displayLatestSeries();
     console.log('Application initialized.');
+});
+
+document.getElementById('imdb-search-button').addEventListener('click', async () => {
+    console.log('IMDb search button clicked.');
+    const imdbId = document.getElementById('imdb-id-input').value.trim();
+    if (imdbId) {
+        console.log('IMDb ID provided:', imdbId);
+        try {
+            const metadata = await getMovieMetadata(imdbId);
+            console.log('Fetched metadata:', metadata);
+            const container = document.getElementById('metadata-container');
+            container.innerHTML = `<pre>${JSON.stringify(metadata, null, 2)}</pre>`;
+        } catch (error) {
+            console.error('Error fetching metadata:', error);
+        }
+        const iframe = document.getElementById('video-player');
+        const loader = document.getElementById('loader');
+        loader.classList.remove('hidden');
+        console.log('Fetching video for IMDb ID:', imdbId);
+        iframe.src = `https://vidbinge.dev/embed/movie/${imdbId}`;
+        iframe.onload = () => {
+            loader.classList.add('hidden');
+            console.log('Video loaded successfully.');
+        };
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('scrolling', 'no');
+    } else {
+        console.log('No IMDb ID provided.');
+    }
+});
+
+document.getElementById('name-search-button').addEventListener('click', async () => {
+    console.log('Name search button clicked.');
+    const movieName = document.getElementById('movie-name-input').value.trim();
+    if (movieName) {
+        console.log('Movie name provided:', movieName);
+        try {
+            const results = await searchMovies(movieName);
+            console.log('Search results:', results);
+            alert(`Found ${results.length} results. Check console for details.`);
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    } else {
+        console.log('No movie name provided.');
+    }
 });
 
 document.getElementById('imdb-search-button').addEventListener('click', () => {

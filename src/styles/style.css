@@ -1,23 +1,64 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #121212;
+    background-color: #141414;
     color: #ffffff;
 }
 
 header {
-    background-color: #1f1f1f;
+    background-color: #141414;
     padding: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    border-bottom: 1px solid #333;
 }
 
 header h1 {
     margin: 0;
     font-size: 2.5rem;
+    color: #e50914;
+}
+
+#search-section {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #141414;
+    border-bottom: 1px solid #333;
+}
+
+#imdb-search, #name-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#imdb-id-input, #movie-name-input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #333;
+    color: #fff;
+}
+
+#imdb-search-button, #name-search-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #e50914;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#imdb-search-button:hover, #name-search-button:hover {
+    background-color: #f40612;
 }
 
 main {
@@ -27,8 +68,8 @@ main {
 }
 
 h2 {
-    color: #34495e;
-    border-bottom: 2px solid #ecf0f1;
+    color: #ffffff;
+    border-bottom: 2px solid #e50914;
     padding-bottom: 5px;
     margin-bottom: 15px;
 }
@@ -45,37 +86,6 @@ h2 {
     border: none;
 }
 
-#search-container {
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: #ecf0f1;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-#search-input {
-    width: calc(100% - 100px);
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    margin-right: 10px;
-}
-
-#search-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#search-button:hover {
-    background-color: #2980b9;
-}
-
 ul {
     list-style-type: none;
     padding: 0;
@@ -84,96 +94,23 @@ ul {
 li {
     padding: 10px;
     margin: 5px 0;
-    background-color: #ecf0f1;
-    border: 1px solid #bdc3c7;
+    background-color: #333;
+    border: 1px solid #444;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 li:hover {
-    background-color: #dcdde1;
-}
-
-#latest-container {
-    margin-top: 30px;
-}
-
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
-
-.video-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.video-item {
-    background: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 5px;
-    margin: 10px;
-    padding: 10px;
-    width: calc(33% - 20px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.video-item img {
-    max-width: 100%;
-    border-radius: 5px;
-}
-
-.video-item h2 {
-    font-size: 1.2em;
-    margin: 10px 0;
-}
-
-.video-item p {
-    font-size: 0.9em;
-    color: #555555;
+    background-color: #444;
 }
 
 footer {
-    background-color: #1f1f1f;
+    background-color: #141414;
     text-align: center;
     padding: 10px;
     color: #ffffff;
-}
-
-#top-bar h1 {
-    margin: 0;
-    font-size: 24px;
-    color: #e50914;
-}
-
-#imdb-search {
-    display: flex;
-    align-items: center;
-}
-
-#imdb-id-input {
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    margin-right: 10px;
-}
-
-#imdb-search-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #e50914;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#imdb-search-button:hover {
-    background-color: #f40612;
+    border-top: 1px solid #333;
 }
 
 #loader {
@@ -187,4 +124,45 @@ footer {
     padding: 20px;
     border-radius: 10px;
     z-index: 1000;
+}
+
+#search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+#search-results.hidden {
+    display: none;
+}
+
+.search-result-item {
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-result-item:hover {
+    background-color: #444;
+}
+
+#logo-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#logo {
+    height: 50px;
+    width: auto;
 }
